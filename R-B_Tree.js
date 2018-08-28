@@ -5,25 +5,9 @@ const nodeColor = {
   BLACK: 1
 };
 
-function toNumber(data) {
-  const offset = 96;
-  if (isNaN(data) && typeof data === 'string') {
-    const dataToLower = data.toLowerCase();
-    if (dataToLower.length > 1) {
-      let number = '';
-      for (const ch of dataToLower) {
-        number += ch.charCodeAt(0) - offset + '';
-      }
-      return parseInt(number);
-    }
-    return dataToLower.charCodeAt(0) - offset;
-  }
-  return data;
-}
-
 class Node {
   constructor(data) {
-    this.data = toNumber(data);
+    this.data = data;
     this.left = null;
     this.right = null;
     this.color = null;
@@ -302,9 +286,7 @@ class RbTree {
   }
 
   printHelper(node, indent, height) {
-    // tree height
     let treeHeight = height;
-
     if (node === null) {
       return;
     }

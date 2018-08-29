@@ -6,6 +6,7 @@ const nodeColor = {
 };
 
 class Node {
+  
   constructor(data) {
     this.data = data;
     this.left = null;
@@ -13,6 +14,7 @@ class Node {
     this.color = null;
     this.parent = null;
   }
+  
 }
 
 class RbTree {
@@ -309,6 +311,7 @@ class RbTree {
     this.printHelper(node.left, indent + indent, treeHeight);
     this.printHelper(node.right, indent + indent, treeHeight);
   }
+  
 }
 
 const tree = new RbTree();

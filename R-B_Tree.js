@@ -23,75 +23,6 @@ class RbTree {
     this.root = null;
   }
 
-  insert(data) {
-    let parent = null;
-    let child = this.root;
-    const newNode = new Node(data);
-    if (this.root === null) {
-      this.root = newNode;
-      newNode.color = nodeColor.BLACK;
-      newNode.parent = null;
-    } else {
-      while (child) {
-        parent = child;
-        if (newNode.data < child.data) {
-          child = child.left;
-        } else {
-          child = child.right;
-        }
-
-      }
-      newNode.parent = parent;
-      if (newNode.data < parent.data) {
-        parent.left = newNode;
-      } else {
-        parent.right = newNode;
-      }
-      newNode.color = nodeColor.RED;
-      this.balanceTree(newNode);
-    }
-  }
-
-  balanceTree(node) {
-    while (node.parent !== null && node.parent.color === nodeColor.RED) {
-      let uncle = null;
-      if (node.parent === node.parent.parent.left) {
-        uncle = node.parent.parent.right;
-        if (uncle !== null && uncle.color === nodeColor.RED) {
-          node.parent.color = nodeColor.BLACK;
-          uncle.color = nodeColor.BLACK;
-          node.parent.parent.color = nodeColor.RED;
-          node = node.parent.parent;
-          continue;
-        }
-        if (node === node.parent.right) {
-          node = node.parent;
-          this.rotateLeft(node);
-        }
-        node.parent.color = nodeColor.BLACK;
-        node.parent.parent.color = nodeColor.RED;
-        this.rotateRight(node.parent.parent);
-      } else {
-        uncle = node.parent.parent.left;
-        if (uncle !== null && uncle.color === nodeColor.RED) {
-          node.parent.color = nodeColor.BLACK;
-          uncle.color = nodeColor.BLACK;
-          node.parent.parent.color = nodeColor.RED;
-          node = node.parent.parent;
-          continue;
-        }
-        if (node === node.parent.left) {
-          node = node.parent;
-          this.rotateRight(node);
-        }
-        node.parent.color = nodeColor.BLACK;
-        node.parent.parent.color = nodeColor.RED;
-        this.rotateLeft(node.parent.parent);
-      }
-    }
-    this.root.color = nodeColor.BLACK;
-  }
-
   rotateLeft(node) {
     const rotateNode = node.right;
     if (!rotateNode.left) {
@@ -135,7 +66,76 @@ class RbTree {
     rotateNode.right = node;
     node.parent = rotateNode;
   }
+  
+   balanceTree(node) {
+    while (node.parent !== null && node.parent.color === nodeColor.RED) {
+      let uncle = null;
+      if (node.parent === node.parent.parent.left) {
+        uncle = node.parent.parent.right;
+        if (uncle !== null && uncle.color === nodeColor.RED) {
+          node.parent.color = nodeColor.BLACK;
+          uncle.color = nodeColor.BLACK;
+          node.parent.parent.color = nodeColor.RED;
+          node = node.parent.parent;
+          continue;
+        }
+        if (node === node.parent.right) {
+          node = node.parent;
+          this.rotateLeft(node);
+        }
+        node.parent.color = nodeColor.BLACK;
+        node.parent.parent.color = nodeColor.RED;
+        this.rotateRight(node.parent.parent);
+      } else {
+        uncle = node.parent.parent.left;
+        if (uncle !== null && uncle.color === nodeColor.RED) {
+          node.parent.color = nodeColor.BLACK;
+          uncle.color = nodeColor.BLACK;
+          node.parent.parent.color = nodeColor.RED;
+          node = node.parent.parent;
+          continue;
+        }
+        if (node === node.parent.left) {
+          node = node.parent;
+          this.rotateRight(node);
+        }
+        node.parent.color = nodeColor.BLACK;
+        node.parent.parent.color = nodeColor.RED;
+        this.rotateLeft(node.parent.parent);
+      }
+    }
+    this.root.color = nodeColor.BLACK;
+  }
 
+   insert(data) {
+    let parent = null;
+    let child = this.root;
+    const newNode = new Node(data);
+    if (this.root === null) {
+      this.root = newNode;
+      newNode.color = nodeColor.BLACK;
+      newNode.parent = null;
+    } else {
+      while (child) {
+        parent = child;
+        if (newNode.data < child.data) {
+          child = child.left;
+        } else {
+          child = child.right;
+        }
+
+      }
+      newNode.parent = parent;
+      if (newNode.data < parent.data) {
+        parent.left = newNode;
+      } else {
+        parent.right = newNode;
+      }
+      newNode.color = nodeColor.RED;
+      this.balanceTree(newNode);
+    }
+  }
+  
   findNode(data) {
     let node = this.root;
     while (node !== null) {
@@ -152,41 +152,21 @@ class RbTree {
     return null;
   }
 
-  delete(data) {
-    const delNode = this.findNode(data);
-    if (delNode === null) {
-      return;
-    }
-    let child;
-    let newNode = delNode;
-    let newNodeDefColor = delNode.color;
-    if (!delNode.left) {
-      child = delNode.right;
-      this.deleteInsert(delNode, delNode.right);
-    } else if (!delNode.right) {
-      child = delNode.left;
-      this.deleteInsert(delNode, delNode.left);
+    deleteInsert(deleteNode, insertNode) {
+    if (deleteNode.parent === null) {
+      this.root = insertNode;
+      insertNode.parent = null;
     } else {
-      newNode = this.minimalNode(delNode.right);
-      newNodeDefColor = delNode.color;
-      child = newNode.right;
-      if (newNode.parent === delNode) {
-        child.parent = newNode;
+      if (deleteNode === deleteNode.parent.left) {
+        deleteNode.parent.left = insertNode;
+
       } else {
-        this.deleteInsert(newNode, newNode.right);
-        newNode.right = delNode.right;
-        newNode.right.parent = newNode;
+        deleteNode.parent.right = insertNode;
       }
-      this.deleteInsert(delNode, newNode);
-      newNode.left = delNode.left;
-      newNode.left.parent = newNode;
-      newNode.color = delNode.color;
-    }
-    if (newNodeDefColor === nodeColor.BLACK) {
-      this.balanceAfterDel(child);
+      insertNode.parent = deleteNode.parent;
     }
   }
-
+  
   balanceAfterDel(node) {
     while (node !== this.root && node.color === nodeColor.BLACK) {
       if (node === node.parent.left) {
@@ -244,21 +224,43 @@ class RbTree {
     node.color = nodeColor.BLACK;
   }
 
-  deleteInsert(deleteNode, insertNode) {
-    if (deleteNode.parent === null) {
-      this.root = insertNode;
-      insertNode.parent = null;
+  
+  delete(data) {
+    const delNode = this.findNode(data);
+    if (delNode === null) {
+      return;
+    }
+    let child;
+    let newNode = delNode;
+    let newNodeDefColor = delNode.color;
+    if (!delNode.left) {
+      child = delNode.right;
+      this.deleteInsert(delNode, delNode.right);
+    } else if (!delNode.right) {
+      child = delNode.left;
+      this.deleteInsert(delNode, delNode.left);
     } else {
-      if (deleteNode === deleteNode.parent.left) {
-        deleteNode.parent.left = insertNode;
-
+      newNode = this.minimalNode(delNode.right);
+      newNodeDefColor = delNode.color;
+      child = newNode.right;
+      if (newNode.parent === delNode) {
+        child.parent = newNode;
       } else {
-        deleteNode.parent.right = insertNode;
+        this.deleteInsert(newNode, newNode.right);
+        newNode.right = delNode.right;
+        newNode.right.parent = newNode;
       }
-      insertNode.parent = deleteNode.parent;
+      this.deleteInsert(delNode, newNode);
+      newNode.left = delNode.left;
+      newNode.left.parent = newNode;
+      newNode.color = delNode.color;
+    }
+    if (newNodeDefColor === nodeColor.BLACK) {
+      this.balanceAfterDel(child);
     }
   }
 
+  
   minimalNode(node) {
     if (node === null || node === undefined) {
       return {};
@@ -280,11 +282,6 @@ class RbTree {
       return leftLen + 1;
     }
     return rightLen + 1;
-  }
-
-  printTree() {
-    const height = this.height(this.root) + 1;
-    this.printHelper(this.root, '__', height);
   }
 
   printHelper(node, indent, height) {
@@ -313,6 +310,13 @@ class RbTree {
   }
   
 }
+  
+  printTree() {
+    const height = this.height(this.root) + 1;
+    this.printHelper(this.root, '__', height);
+  }
+
+  
 
 const tree = new RbTree();
 tree.insert(10);

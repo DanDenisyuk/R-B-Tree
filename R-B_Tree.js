@@ -6,7 +6,6 @@ const nodeColor = {
 };
 
 class Node {
-  
   constructor(data) {
     this.data = data;
     this.left = null;
@@ -14,13 +13,34 @@ class Node {
     this.color = null;
     this.parent = null;
   }
-  
 }
 
 class RbTree {
 
   constructor() {
     this.root = null;
+  }
+
+  rotateRight(node) {
+    const rotateNode = node.left;
+    if (!rotateNode.right) {
+      node.left = null;
+    } else {
+      node.left = rotateNode.right;
+    }
+    if (rotateNode.right) {
+      rotateNode.right.parent = node;
+    }
+    rotateNode.parent = node.parent;
+    if (!node.parent) {
+      this.root = rotateNode;
+    } else if (node === node.parent.right) {
+      node.parent.right = rotateNode;
+    } else {
+      node.parent.left = rotateNode;
+    }
+    rotateNode.right = node;
+    node.parent = rotateNode;
   }
 
   rotateLeft(node) {
@@ -45,29 +65,7 @@ class RbTree {
     node.parent = rotateNode;
   }
 
-  rotateRight(node) {
-    const rotateNode = node.left;
-    if (!rotateNode.right) {
-      node.left = null;
-    } else {
-      node.left = rotateNode.right;
-    }
-    if (rotateNode.right) {
-      rotateNode.right.parent = node;
-    }
-    rotateNode.parent = node.parent;
-    if (!node.parent) {
-      this.root = rotateNode;
-    } else if (node === node.parent.right) {
-      node.parent.right = rotateNode;
-    } else {
-      node.parent.left = rotateNode;
-    }
-    rotateNode.right = node;
-    node.parent = rotateNode;
-  }
-  
-   balanceTree(node) {
+  balanceTree(node) {
     while (node.parent !== null && node.parent.color === nodeColor.RED) {
       let uncle = null;
       if (node.parent === node.parent.parent.left) {
@@ -107,7 +105,7 @@ class RbTree {
     this.root.color = nodeColor.BLACK;
   }
 
-   insert(data) {
+  insert(data) {
     let parent = null;
     let child = this.root;
     const newNode = new Node(data);
@@ -135,7 +133,7 @@ class RbTree {
       this.balanceTree(newNode);
     }
   }
-  
+
   findNode(data) {
     let node = this.root;
     while (node !== null) {
@@ -152,7 +150,7 @@ class RbTree {
     return null;
   }
 
-    deleteInsert(deleteNode, insertNode) {
+  deleteInsert(deleteNode, insertNode) {
     if (deleteNode.parent === null) {
       this.root = insertNode;
       insertNode.parent = null;
@@ -166,7 +164,7 @@ class RbTree {
       insertNode.parent = deleteNode.parent;
     }
   }
-  
+
   balanceAfterDel(node) {
     while (node !== this.root && node.color === nodeColor.BLACK) {
       if (node === node.parent.left) {
@@ -178,7 +176,7 @@ class RbTree {
           uncle = node.parent.right;
         }
         if (uncle.left.color === nodeColor.BLACK &&
-            uncle.right.color === nodeColor.BLACK) {
+          uncle.right.color === nodeColor.BLACK) {
           uncle.color = nodeColor.RED;
           node = node.parent;
           continue;
@@ -203,7 +201,7 @@ class RbTree {
           uncle = node.parent.left;
         }
         if (uncle.right.color === nodeColor.BLACK &&
-            uncle.left.color === nodeColor.BLACK) {
+          uncle.left.color === nodeColor.BLACK) {
           uncle.color = nodeColor.RED;
           node = node.parent;
         } else if (uncle.left.color === nodeColor.BLACK) {
@@ -224,7 +222,6 @@ class RbTree {
     node.color = nodeColor.BLACK;
   }
 
-  
   delete(data) {
     const delNode = this.findNode(data);
     if (delNode === null) {
@@ -260,7 +257,6 @@ class RbTree {
     }
   }
 
-  
   minimalNode(node) {
     if (node === null || node === undefined) {
       return {};
@@ -286,6 +282,7 @@ class RbTree {
 
   printHelper(node, indent, height) {
     let treeHeight = height;
+
     if (node === null) {
       return;
     }
@@ -308,15 +305,13 @@ class RbTree {
     this.printHelper(node.left, indent + indent, treeHeight);
     this.printHelper(node.right, indent + indent, treeHeight);
   }
-  
-}
-  
+
   printTree() {
     const height = this.height(this.root) + 1;
     this.printHelper(this.root, '__', height);
   }
 
-  
+}
 
 const tree = new RbTree();
 tree.insert(10);
@@ -324,4 +319,3 @@ tree.insert(8);
 tree.insert(9);
 
 tree.printTree();
-

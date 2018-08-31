@@ -165,6 +165,16 @@ class RbTree {
     }
   }
 
+   minimalNode(node) {
+    if (node === null || node === undefined) {
+      return {};
+    }
+    while (node.left) {
+      node = node.left;
+    }
+    return node;
+  }
+  
   balanceAfterDel(node) {
     while (node !== this.root && node.color === nodeColor.BLACK) {
       if (node === node.parent.left) {
@@ -255,16 +265,6 @@ class RbTree {
     if (newNodeDefColor === nodeColor.BLACK) {
       this.balanceAfterDel(child);
     }
-  }
-
-  minimalNode(node) {
-    if (node === null || node === undefined) {
-      return {};
-    }
-    while (node.left) {
-      node = node.left;
-    }
-    return node;
   }
 
   height(node) {
